@@ -4,7 +4,7 @@
 #
 Name     : qtquickcontrols
 Version  : 5.11.1
-Release  : 9
+Release  : 10
 URL      : http://download.qt.io/official_releases/qt/5.11/5.11.1/submodules/qtquickcontrols-everywhere-src-5.11.1.tar.xz
 Source0  : http://download.qt.io/official_releases/qt/5.11/5.11.1/submodules/qtquickcontrols-everywhere-src-5.11.1.tar.xz
 Summary  : No detailed summary available
@@ -12,6 +12,7 @@ Group    : Development/Tools
 License  : Apache-2.0 GFDL-1.3 GPL-2.0 GPL-3.0 LGPL-3.0 OFL-1.0
 Requires: qtquickcontrols-lib
 Requires: qtquickcontrols-license
+BuildRequires : buildreq-qmake
 BuildRequires : mesa-dev
 BuildRequires : pkgconfig(Qt5Core)
 BuildRequires : pkgconfig(Qt5Gui)
@@ -21,9 +22,6 @@ BuildRequires : pkgconfig(Qt5QuickWidgets)
 BuildRequires : pkgconfig(Qt5Sql)
 BuildRequires : pkgconfig(Qt5Test)
 BuildRequires : pkgconfig(Qt5Widgets)
-BuildRequires : qtbase-dev
-BuildRequires : qtbase-extras
-BuildRequires : qtdeclarative-extras
 
 %description
 ABOUT
@@ -59,16 +57,16 @@ test -r config.log && cat config.log
 make  %{?_smp_mflags}
 
 %install
-export SOURCE_DATE_EPOCH=1530977007
+export SOURCE_DATE_EPOCH=1535164090
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/doc/qtquickcontrols
+cp LICENSE.FDL %{buildroot}/usr/share/doc/qtquickcontrols/LICENSE.FDL
+cp LICENSE.GPL2 %{buildroot}/usr/share/doc/qtquickcontrols/LICENSE.GPL2
 cp LICENSE.GPL3 %{buildroot}/usr/share/doc/qtquickcontrols/LICENSE.GPL3
 cp LICENSE.GPL3-EXCEPT %{buildroot}/usr/share/doc/qtquickcontrols/LICENSE.GPL3-EXCEPT
-cp LICENSE.GPL2 %{buildroot}/usr/share/doc/qtquickcontrols/LICENSE.GPL2
-cp LICENSE.FDL %{buildroot}/usr/share/doc/qtquickcontrols/LICENSE.FDL
 cp LICENSE.LGPL3 %{buildroot}/usr/share/doc/qtquickcontrols/LICENSE.LGPL3
-cp examples/quickcontrols/extras/gallery/fonts/LICENSE.txt %{buildroot}/usr/share/doc/qtquickcontrols/examples_quickcontrols_extras_gallery_fonts_LICENSE.txt
 cp examples/quickcontrols/extras/dashboard/fonts/LICENSE %{buildroot}/usr/share/doc/qtquickcontrols/examples_quickcontrols_extras_dashboard_fonts_LICENSE
+cp examples/quickcontrols/extras/gallery/fonts/LICENSE.txt %{buildroot}/usr/share/doc/qtquickcontrols/examples_quickcontrols_extras_gallery_fonts_LICENSE.txt
 cp src/extras/Styles/Flat/fonts/LICENSE.txt %{buildroot}/usr/share/doc/qtquickcontrols/src_extras_Styles_Flat_fonts_LICENSE.txt
 %make_install
 
