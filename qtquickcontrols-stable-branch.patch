@@ -1,0 +1,22 @@
+Andy Shaw (1):
+      Convert the path to a url correctly
+
+Antti Kokko (1):
+      Add changes file for Qt 5.15.2
+
+Jani Heikkinen (1):
+      Bump version
+
+diff --git a/src/dialogs/DefaultFileDialog.qml b/src/dialogs/DefaultFileDialog.qml
+index 077b5acd..ea2fa42d 100644
+--- a/src/dialogs/DefaultFileDialog.qml
++++ b/src/dialogs/DefaultFileDialog.qml
+@@ -115,7 +115,7 @@ AbstractFileDialog {
+ 
+     function dirDown(path) {
+         view.selection.clear()
+-        root.folder = "file://" + path
++        root.folder = root.pathToUrl(path)
+     }
+     function dirUp() {
+         view.selection.clear()
