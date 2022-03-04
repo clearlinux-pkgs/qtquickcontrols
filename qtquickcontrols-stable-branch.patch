@@ -1,5 +1,7 @@
-Andy Shaw (1):
+Andy Shaw (3):
       Convert the path to a url correctly
+      [Android] Fix CheckBox rtl issues
+      ColorDialog: Set the options before the current color on the helper
 
 Antti Kokko (1):
       Add changes file for Qt 5.15.2
@@ -7,6 +9,25 @@ Antti Kokko (1):
 Jani Heikkinen (1):
       Bump version
 
+Pekka Gehör (1):
+      [Android] Fix FontDialog layout issues
+
+Tarja Sundqvist (2):
+      Update commercial license headers
+      Revert "Update commercial license headers"
+
+diff --git a/src/controls/Styles/Android/CheckBoxStyle.qml b/src/controls/Styles/Android/CheckBoxStyle.qml
+index d921aef1..1e0541d9 100644
+--- a/src/controls/Styles/Android/CheckBoxStyle.qml
++++ b/src/controls/Styles/Android/CheckBoxStyle.qml
+@@ -66,6 +66,7 @@ Style {
+             window_focused: control.Window.active
+             styleDef: panel.styleDef.CompoundButton_button
+             anchors.verticalCenter: parent.verticalCenter
++            anchors.left: parent.left
+         }
+ 
+         LabelStyle {
 diff --git a/src/dialogs/DefaultFileDialog.qml b/src/dialogs/DefaultFileDialog.qml
 index 077b5acd..ea2fa42d 100644
 --- a/src/dialogs/DefaultFileDialog.qml
@@ -20,3 +41,255 @@ index 077b5acd..ea2fa42d 100644
      }
      function dirUp() {
          view.selection.clear()
+diff --git a/src/dialogs/DefaultFontDialog.qml b/src/dialogs/DefaultFontDialog.qml
+index ee6366a5..a307f46f 100644
+--- a/src/dialogs/DefaultFontDialog.qml
++++ b/src/dialogs/DefaultFontDialog.qml
+@@ -52,13 +52,31 @@ AbstractFontDialog {
+ 
+     property alias font: content.externalFont
+     property alias currentFont: content.font
++    property bool isAndroid: Qt.platform.os === "android"
++
++    Screen.onPrimaryOrientationChanged: {
++        if (isAndroid)
++            setWidthsToMatchAndroid()
++    }
++
++    Component.onCompleted: {
++        if (isAndroid)
++            setWidthsToMatchAndroid()
++    }
++
++    function setWidthsToMatchAndroid() {
++        fontListView.Layout.maximumWidth = content.width - weightListView.width - pointSizeSpinBox.width - content.outerSpacing
++        wsComboBox.Layout.maximumWidth = (content.width / 2) - content.outerSpacing
++    }
+ 
+     Rectangle {
+         id: content
+         SystemPalette { id: palette }
+ 
+-        implicitWidth: Math.min(root.__maximumDimension, Math.max(Screen.pixelDensity * 100, mainLayout.implicitWidth + outerSpacing * 2))
+-        implicitHeight: Math.min(root.__maximumDimension, Math.max(Screen.pixelDensity * 60, mainLayout.implicitHeight + outerSpacing * 2))
++        implicitWidth: root.isAndroid ? Math.min(Screen.width, Screen.height) * (9 / 10) : Math.min(root.__maximumDimension, Screen.pixelDensity * 100)
++        implicitHeight: (Screen.primaryOrientation === Qt.PortraitOrientation || Screen.primaryOrientation === Qt.InvertedPortraitOrientation)
++                        ? Math.max(root.__maximumDimension, Screen.pixelDensity * 60)
++                        : Math.min(root.__maximumDimension, Screen.pixelDensity * 60)
+         property real spacing: 6
+         property real outerSpacing: 12
+         color: palette.window
+@@ -117,9 +135,9 @@ AbstractFontDialog {
+                 columnSpacing: content.spacing; rowSpacing: content.spacing
+                 columns: 3
+ 
+-                Label { id: fontNameLabel; Layout.fillWidth: true; text: qsTr("Font"); font.bold: true }
+-                Label { id: weightLabel; text: qsTr("Weight"); font.bold: true }
+-                Label { id: sizeLabel; text: qsTr("Size"); font.bold: true }
++                Label { id: fontNameLabel; horizontalAlignment: Text.AlignLeft; Layout.fillWidth: true; text: qsTr("Font"); font.bold: true }
++                Label { id: weightLabel; horizontalAlignment: Text.AlignLeft; text: qsTr("Weight"); font.bold: true }
++                Label { id: sizeLabel; horizontalAlignment: Text.AlignLeft; text: qsTr("Size"); font.bold: true }
+                 TableView {
+                     id: fontListView
+                     focus: true
+@@ -133,6 +151,13 @@ AbstractFontDialog {
+                         fontModel.findPointSizesIndex()
+                     }
+                     TableViewColumn{ id: fontColumn; role: "family"; title: qsTr("Font Family") }
++                    itemDelegate: Text {
++                        width: parent.width
++                        verticalAlignment: Text.AlignVCenter
++                        horizontalAlignment: Text.AlignLeft
++                        elide: styleData.elideMode
++                        text: styleData.value
++                    }
+                     model: FontListModel {
+                         id: fontModel
+                         scalableFonts: root.scalableFonts
+@@ -192,7 +217,7 @@ AbstractFontDialog {
+                 }
+                 TableView {
+                     id: weightListView
+-                    implicitWidth: (Component.status == Component.Ready) ? (weightColumn.width + content.outerSpacing) : (100)
++                    implicitWidth: (Component.status == Component.Ready) ? (weightColumn.width + content.outerSpacing) : (root.isAndroid ? 180 : 100)
+                     Layout.fillHeight: true
+                     Component.onCompleted: resizeColumnsToContents();
+                     headerVisible: false
+@@ -200,6 +225,13 @@ AbstractFontDialog {
+                         weightModel.findIndex()
+                     }
+                     TableViewColumn { id: weightColumn; role: "name"; title: qsTr("Weight") }
++                    itemDelegate: Text {
++                        width: parent.width
++                        verticalAlignment: Text.AlignVCenter
++                        horizontalAlignment: Text.AlignLeft
++                        elide: styleData.elideMode
++                        text: styleData.value
++                    }
+                     model: ListModel {
+                         id: weightModel
+                         ListElement { name: qsTr("Thin"); weight: Font.Thin }
+@@ -239,7 +271,7 @@ AbstractFontDialog {
+                 ColumnLayout {
+                     SpinBox {
+                         id: pointSizeSpinBox;
+-                        implicitWidth: (Component.status == Component.Ready) ? (psColumn.width + content.outerSpacing) : (80)
++                        implicitWidth: (Component.status == Component.Ready) ? (psColumn.width + content.outerSpacing) : (root.isAndroid ? 130 : 80)
+                         value: content.font.pointSize
+                         decimals: 0
+                         minimumValue: 1
+@@ -271,9 +303,16 @@ AbstractFontDialog {
+                         id: pointSizesListView
+                         Layout.fillHeight: true
+                         headerVisible: false
+-                        implicitWidth: (Component.status == Component.Ready) ? (psColumn.width + content.outerSpacing) : (80)
++                        implicitWidth: (Component.status == Component.Ready) ? (psColumn.width + content.outerSpacing) : (root.isAndroid ? 130 : 80)
+                         Component.onCompleted: resizeColumnsToContents();
+                         TableViewColumn{ id: psColumn; role: ""; title: qsTr("Size") }
++                        itemDelegate: Text {
++                            width: parent.width
++                            verticalAlignment: Text.AlignVCenter
++                            horizontalAlignment: Text.AlignLeft
++                            elide: styleData.elideMode
++                            text: styleData.value
++                        }
+                         model: content.pointSizes
+                         property bool guard: false
+                         function select(row) {
+@@ -300,7 +339,7 @@ AbstractFontDialog {
+                 ColumnLayout {
+                     spacing: content.spacing
+                     Layout.rowSpan: 3
+-                    Label { id: optionsLabel; text: qsTr("Style"); font.bold: true }
++                    Label { text: qsTr("Style"); font.bold: true }
+                     CheckBox {
+                         id: italicCheckBox
+                         text: qsTr("Italic")
+@@ -326,7 +365,7 @@ AbstractFontDialog {
+                         onClicked: { content.font.strikeout = strikeoutCheckBox.checked }
+                     }
+                     Item { Layout.fillHeight: true; } //spacer
+-                    Label { id: writingSystemLabel; text: qsTr("Writing System"); font.bold: true }
++                    Label { text: qsTr("Writing System"); font.bold: true }
+                 }
+ 
+                 ColumnLayout {
+diff --git a/src/dialogs/qquickabstractcolordialog.cpp b/src/dialogs/qquickabstractcolordialog.cpp
+index a558b12c..931893f7 100644
+--- a/src/dialogs/qquickabstractcolordialog.cpp
++++ b/src/dialogs/qquickabstractcolordialog.cpp
+@@ -100,8 +100,10 @@ void QQuickAbstractColorDialog::setTitle(const QString &t)
+ 
+ void QQuickAbstractColorDialog::setColor(QColor arg)
+ {
+-    if (m_dlgHelper)
++    if (m_dlgHelper) {
++        m_dlgHelper->setOptions(m_options);
+         m_dlgHelper->setCurrentColor(arg);
++    }
+     // m_options->setCustomColor or setStandardColor don't make sense here
+     if (m_color != arg) {
+         m_color = arg;
+diff --git a/tests/auto/dialogs/data/ColorDialogCreated.qml b/tests/auto/dialogs/data/ColorDialogCreated.qml
+new file mode 100644
+index 00000000..508c28eb
+--- /dev/null
++++ b/tests/auto/dialogs/data/ColorDialogCreated.qml
+@@ -0,0 +1,64 @@
++/****************************************************************************
++**
++** Copyright (C) 2021 The Qt Company Ltd.
++** Contact: https://www.qt.io/licensing/
++**
++** This file is part of the test suite of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:BSD$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and The Qt Company. For licensing terms
++** and conditions see https://www.qt.io/terms-conditions. For further
++** information use the contact form at https://www.qt.io/contact-us.
++**
++** BSD License Usage
++** Alternatively, you may use this file under the terms of the BSD license
++** as follows:
++**
++** "Redistribution and use in source and binary forms, with or without
++** modification, are permitted provided that the following conditions are
++** met:
++**   * Redistributions of source code must retain the above copyright
++**     notice, this list of conditions and the following disclaimer.
++**   * Redistributions in binary form must reproduce the above copyright
++**     notice, this list of conditions and the following disclaimer in
++**     the documentation and/or other materials provided with the
++**     distribution.
++**   * Neither the name of The Qt Company Ltd nor the names of its
++**     contributors may be used to endorse or promote products derived
++**     from this software without specific prior written permission.
++**
++**
++** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++import QtQuick 2.0
++import QtQuick.Dialogs 1.0
++
++Rectangle {
++    width: 1024
++    height: 320
++    property string col: "#FF0000"
++    ColorDialog {
++        id: markerColorDialogId
++        visible: false
++        color: col
++        objectName: "colorDialog"
++    }
++}
+diff --git a/tests/auto/dialogs/tst_dialogs.cpp b/tests/auto/dialogs/tst_dialogs.cpp
+index a9c9b5e6..bf53f89a 100644
+--- a/tests/auto/dialogs/tst_dialogs.cpp
++++ b/tests/auto/dialogs/tst_dialogs.cpp
+@@ -63,6 +63,9 @@ private slots:
+     void fileDialogNameFilters();
+     void fileDialogDefaultSuffix();
+ 
++    // ColorDialog
++    void colorDialogCreated();
++
+ private:
+ };
+ 
+@@ -386,6 +389,18 @@ void tst_dialogs::dialogWithDynamicTitle()
+     QTRY_COMPARE(window->title(), QLatin1String("New Title"));
+ }
+ 
++void tst_dialogs::colorDialogCreated()
++{
++    // Test to ensure it is not crashing when color is assigned
++    // on startup
++    QQmlEngine engine;
++    QQmlComponent component(&engine);
++    component.loadUrl(testFileUrl("ColorDialogCreated.qml"));
++    QScopedPointer<QObject> cleanup(component.create());
++    QObject *colorDlg = cleanup->findChild<QObject *>("colorDialog");
++    QVERIFY(colorDlg);
++}
++
+ QTEST_MAIN(tst_dialogs)
+ 
+ #include "tst_dialogs.moc"
