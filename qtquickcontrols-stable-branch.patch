@@ -6,15 +6,17 @@ Andy Shaw (3):
 Antti Kokko (1):
       Add changes file for Qt 5.15.2
 
-Jani Heikkinen (1):
+Jani Heikkinen (2):
+      Bump version
       Bump version
 
 Pekka Gehör (1):
       [Android] Fix FontDialog layout issues
 
-Tarja Sundqvist (2):
+Tarja Sundqvist (3):
       Update commercial license headers
       Revert "Update commercial license headers"
+      Merge remote-tracking branch 'origin/tqtc/lts-5.15.4' into tqtc/lts-5.15-opensource
 
 diff --git a/src/controls/Styles/Android/CheckBoxStyle.qml b/src/controls/Styles/Android/CheckBoxStyle.qml
 index d921aef1..1e0541d9 100644
