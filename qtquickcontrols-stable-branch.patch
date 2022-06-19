@@ -10,14 +10,32 @@ Jani Heikkinen (2):
       Bump version
       Bump version
 
+Joni Poikelin (1):
+      Fix warning with QML FileDialog with many files
+
 Pekka Gehör (1):
       [Android] Fix FontDialog layout issues
 
-Tarja Sundqvist (3):
+Tarja Sundqvist (5):
       Update commercial license headers
       Revert "Update commercial license headers"
+      Bump version
       Merge remote-tracking branch 'origin/tqtc/lts-5.15.4' into tqtc/lts-5.15-opensource
+      Merge remote-tracking branch 'origin/tqtc/lts-5.15.5' into tqtc/lts-5.15-opensource
 
+diff --git a/src/controls/Private/BasicTableView.qml b/src/controls/Private/BasicTableView.qml
+index cd6114a1..4f0f9a0e 100644
+--- a/src/controls/Private/BasicTableView.qml
++++ b/src/controls/Private/BasicTableView.qml
+@@ -491,7 +491,7 @@ ScrollView {
+             y: listView.contentHeight - listView.contentY + listView.originY
+             width: parent.width
+             visible: alternatingRowColors
+-            height: listView.model && listView.model.count ? (viewport.height - listView.contentHeight) : 0
++            height: listView.model && listView.model.count ? Math.max(viewport.height - listView.contentHeight, 0) : 0
+             Repeater {
+                 model: visible ? parent.paddedRowCount : 0
+                 Loader {
 diff --git a/src/controls/Styles/Android/CheckBoxStyle.qml b/src/controls/Styles/Android/CheckBoxStyle.qml
 index d921aef1..1e0541d9 100644
 --- a/src/controls/Styles/Android/CheckBoxStyle.qml
