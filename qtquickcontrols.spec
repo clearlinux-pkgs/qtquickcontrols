@@ -4,7 +4,7 @@
 #
 Name     : qtquickcontrols
 Version  : 5.15.2
-Release  : 30
+Release  : 31
 URL      : https://download.qt.io/official_releases/qt/5.15/5.15.2/submodules/qtquickcontrols-everywhere-src-5.15.2.tar.xz
 Source0  : https://download.qt.io/official_releases/qt/5.15/5.15.2/submodules/qtquickcontrols-everywhere-src-5.15.2.tar.xz
 Summary  : No detailed summary available
@@ -69,17 +69,17 @@ test -r config.log && cat config.log
 make  %{?_smp_mflags}
 
 %install
-export SOURCE_DATE_EPOCH=1655664910
+export SOURCE_DATE_EPOCH=1662656967
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/qtquickcontrols
-cp %{_builddir}/qtquickcontrols-everywhere-src-5.15.2/LICENSE.FDL %{buildroot}/usr/share/package-licenses/qtquickcontrols/61907422fefcd2313a9b570c31d203a6dbebd333
-cp %{_builddir}/qtquickcontrols-everywhere-src-5.15.2/LICENSE.GPL2 %{buildroot}/usr/share/package-licenses/qtquickcontrols/4cc77b90af91e615a64ae04893fdffa7939db84c
-cp %{_builddir}/qtquickcontrols-everywhere-src-5.15.2/LICENSE.GPL3 %{buildroot}/usr/share/package-licenses/qtquickcontrols/8624bcdae55baeef00cd11d5dfcfa60f68710a02
-cp %{_builddir}/qtquickcontrols-everywhere-src-5.15.2/LICENSE.GPL3-EXCEPT %{buildroot}/usr/share/package-licenses/qtquickcontrols/e93757aefa405f2c9a8a55e780ae9c39542dfc3a
-cp %{_builddir}/qtquickcontrols-everywhere-src-5.15.2/LICENSE.LGPL3 %{buildroot}/usr/share/package-licenses/qtquickcontrols/f45ee1c765646813b442ca58de72e20a64a7ddba
-cp %{_builddir}/qtquickcontrols-everywhere-src-5.15.2/examples/quickcontrols/extras/dashboard/fonts/LICENSE %{buildroot}/usr/share/package-licenses/qtquickcontrols/23e8fed3e3499427ef5a80cbff0aca0946140493
-cp %{_builddir}/qtquickcontrols-everywhere-src-5.15.2/examples/quickcontrols/extras/gallery/fonts/LICENSE.txt %{buildroot}/usr/share/package-licenses/qtquickcontrols/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/qtquickcontrols-everywhere-src-5.15.2/src/extras/Styles/Flat/fonts/LICENSE.txt %{buildroot}/usr/share/package-licenses/qtquickcontrols/2b8b815229aa8a61e483fb4ba0588b8b6c491890
+cp %{_builddir}/qtquickcontrols-everywhere-src-%{version}/LICENSE.FDL %{buildroot}/usr/share/package-licenses/qtquickcontrols/61907422fefcd2313a9b570c31d203a6dbebd333 || :
+cp %{_builddir}/qtquickcontrols-everywhere-src-%{version}/LICENSE.GPL2 %{buildroot}/usr/share/package-licenses/qtquickcontrols/4cc77b90af91e615a64ae04893fdffa7939db84c || :
+cp %{_builddir}/qtquickcontrols-everywhere-src-%{version}/LICENSE.GPL3 %{buildroot}/usr/share/package-licenses/qtquickcontrols/8624bcdae55baeef00cd11d5dfcfa60f68710a02 || :
+cp %{_builddir}/qtquickcontrols-everywhere-src-%{version}/LICENSE.GPL3-EXCEPT %{buildroot}/usr/share/package-licenses/qtquickcontrols/e93757aefa405f2c9a8a55e780ae9c39542dfc3a || :
+cp %{_builddir}/qtquickcontrols-everywhere-src-%{version}/LICENSE.LGPL3 %{buildroot}/usr/share/package-licenses/qtquickcontrols/f45ee1c765646813b442ca58de72e20a64a7ddba || :
+cp %{_builddir}/qtquickcontrols-everywhere-src-%{version}/examples/quickcontrols/extras/dashboard/fonts/LICENSE %{buildroot}/usr/share/package-licenses/qtquickcontrols/23e8fed3e3499427ef5a80cbff0aca0946140493 || :
+cp %{_builddir}/qtquickcontrols-everywhere-src-%{version}/examples/quickcontrols/extras/gallery/fonts/LICENSE.txt %{buildroot}/usr/share/package-licenses/qtquickcontrols/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/qtquickcontrols-everywhere-src-%{version}/src/extras/Styles/Flat/fonts/LICENSE.txt %{buildroot}/usr/share/package-licenses/qtquickcontrols/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
 %make_install
 
 %files
